@@ -226,9 +226,46 @@
     background: var(--surface-hover);
   }
   
-  .navbtn { display: none; background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+  .navbtn { display: none; background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.2s; }
+  .navbtn:hover { background: var(--surface-hover); }
   .btn-short { display: none; }
   .btn-full { display: inline; }
+
+  /* MOBILE MENU DRAWER */
+  .mobile-menu-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 998; backdrop-filter: blur(4px);
+  }
+  .mobile-menu-overlay.open { display: block; }
+  .mobile-menu-drawer {
+    position: fixed; top: 0; right: -300px; width: 280px; height: 100vh;
+    background: var(--surface); border-left: 1px solid var(--border);
+    z-index: 999; padding: 80px 24px 40px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: right 0.35s cubic-bezier(0.25,1,0.5,1);
+    box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+  }
+  .mobile-menu-drawer.open { right: 0; }
+  .mobile-menu-drawer a {
+    font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700;
+    color: var(--text-muted); padding: 14px 16px; border-radius: 12px;
+    transition: all 0.2s; display: block;
+  }
+  .mobile-menu-drawer a:hover, .mobile-menu-drawer a.active {
+    color: var(--primary); background: var(--surface-hover);
+  }
+  .mobile-menu-drawer .drawer-join {
+    margin-top: 20px; padding: 14px; text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff !important; border-radius: 14px; font-size: 16px;
+  }
+  .mobile-menu-drawer .drawer-join:hover { opacity: 0.9; background: linear-gradient(135deg, var(--primary), var(--accent)); }
+  .mobile-menu-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--surface-hover); border: none; border-radius: 50%;
+    width: 40px; height: 40px; font-size: 22px; cursor: pointer;
+    color: var(--text-main); display: flex; align-items: center; justify-content: center;
+  }
 
   /* HERO */
   @keyframes heroGradientPan {
@@ -745,7 +782,7 @@
   @media(max-width: 900px) {
     /* NAV */
     .navlinks { display: none; }
-    .navbtn { display: none; }
+    .navbtn { display: flex; align-items: center; justify-content: center; }
     nav { padding: 10px 16px; }
     .brand small { display: none; }
     .brand span { font-size: 14px; }
@@ -820,10 +857,24 @@
         </svg>
       </button>
       <button onclick="openJoinForm()" class="btn"><span class="btn-full">Join the Club</span><span class="btn-short">Join</span></button>
-      <button class="navbtn">☰</button>
+      <button class="navbtn" id="navbtn" onclick="toggleMobileMenu()" aria-label="Open Menu">☰</button>
     </div>
   </nav>
 </header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-menu-drawer" id="mobileDrawer">
+  <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
+  <a href="#home" class="nav-link mobile-nav-link active" onclick="closeMobileMenu()">🏠 Home</a>
+  <a href="#college" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">🏫 College</a>
+  <a href="#club" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">🤖 About Club</a>
+  <a href="#inspiration" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">🌟 Inspiration</a>
+  <a href="#committee" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">👥 Committee</a>
+  <a href="#active-members" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">🧑‍💻 Members</a>
+  <a href="#events" class="nav-link mobile-nav-link" onclick="closeMobileMenu()">📅 Events</a>
+  <a href="#" class="drawer-join" onclick="closeMobileMenu(); openJoinForm();">✨ Join the Club</a>
+</div>
 
 <section id="home" class="hero page-section active-section">
   <!-- Glowing Floating Orbs Background -->
@@ -1436,6 +1487,35 @@
       sunIcon.style.display = 'none';
     }
   }
+
+  // Mobile Menu
+  function toggleMobileMenu() {
+    const drawer = document.getElementById('mobileDrawer');
+    const overlay = document.getElementById('mobileOverlay');
+    const btn = document.getElementById('navbtn');
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      btn.innerHTML = '☰';
+      document.body.style.overflow = 'auto';
+    } else {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      btn.innerHTML = '✕';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobileDrawer').classList.remove('open');
+    document.getElementById('mobileOverlay').classList.remove('open');
+    const btn = document.getElementById('navbtn');
+    if (btn) btn.innerHTML = '☰';
+    document.body.style.overflow = 'auto';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
 
   // Initial Apply
   applyTheme(currentTheme);
