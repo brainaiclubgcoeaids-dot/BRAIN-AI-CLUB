@@ -181,8 +181,8 @@
     background: transparent;
   }
   .brand-text { display: flex; flex-direction: column; }
-  .brand span { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: 0.5px; }
-  .brand small { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+  .brand span { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: 0.5px; white-space: nowrap; }
+  .brand small { font-size: 12px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
   
   .navlinks { display: flex; gap: 32px; align-items: center; }
   .navlinks a { font-size: 16px; font-weight: 600; color: var(--text-muted); transition: all 0.3s; padding-bottom: 4px; border-bottom: 2px solid transparent; }
@@ -227,6 +227,8 @@
   }
   
   .navbtn { display: none; background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+  .btn-short { display: none; }
+  .btn-full { display: inline; }
 
   /* HERO */
   @keyframes heroGradientPan {
@@ -742,12 +744,16 @@
   @media(max-width: 900px) {
     .navlinks { display: none; }
     .navbtn { display: none; }
+    nav { padding: 10px 16px; }
     .brand small { display: none; }
-    .brand span { font-size: 16px; }
-    .brand { gap: 10px; }
-    .nav-actions { gap: 8px; }
-    .nav-actions .btn { padding: 8px 14px; font-size: 14px; }
-    .theme-toggle { width: 38px; height: 38px; }
+    .brand span { font-size: 14px; }
+    .brand { gap: 8px; max-width: calc(100vw - 130px); overflow: hidden; }
+    .brand-icon { width: 36px !important; height: 36px !important; min-width: 36px; }
+    .nav-actions { gap: 8px; flex-shrink: 0; }
+    .nav-actions .btn { padding: 8px 12px; font-size: 13px; white-space: nowrap; }
+    .btn-full { display: none; }
+    .btn-short { display: inline; }
+    .theme-toggle { width: 36px; height: 36px; font-size: 16px; }
     .hero > .wrap:nth-child(2) { grid-template-columns: 1fr; text-align: center; }
     .hero-cta { justify-content: center; }
     .hero-visual { order: -1; margin-bottom: 40px; }
@@ -804,7 +810,7 @@
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
       </button>
-      <button onclick="openJoinForm()" class="btn">Join the Club</button>
+      <button onclick="openJoinForm()" class="btn"><span class="btn-full">Join the Club</span><span class="btn-short">Join</span></button>
       <button class="navbtn">☰</button>
     </div>
   </nav>
