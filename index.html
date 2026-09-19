@@ -14,6 +14,7 @@
 
 <!-- Firebase Compat CDN -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -2127,6 +2128,27 @@
             if (mailLink) {
               mailLink.href = `mailto:${siteData.settings.email}`;
               mailLink.textContent = siteData.settings.email;
+            }
+          }
+          if (siteData.settings.linkedin) {
+            const li = document.querySelector('footer a[href*="linkedin.com"]') || Array.from(document.querySelectorAll('footer a')).find(a => a.textContent.trim().toLowerCase() === 'linkedin');
+            if (li) {
+              li.href = siteData.settings.linkedin;
+              li.target = '_blank';
+            }
+          }
+          if (siteData.settings.instagram) {
+            const ig = Array.from(document.querySelectorAll('footer a')).find(a => a.textContent.trim().toLowerCase() === 'instagram');
+            if (ig) {
+              ig.href = siteData.settings.instagram;
+              ig.target = '_blank';
+            }
+          }
+          if (siteData.settings.github) {
+            const gh = Array.from(document.querySelectorAll('footer a')).find(a => a.textContent.trim().toLowerCase() === 'github');
+            if (gh) {
+              gh.href = siteData.settings.github;
+              gh.target = '_blank';
             }
           }
         }

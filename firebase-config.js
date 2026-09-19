@@ -39,10 +39,16 @@ if (typeof firebase !== 'undefined') {
   try {
     if (isFirebaseConfigured()) {
       firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
-      db = firebase.firestore();
-      storage = firebase.storage();
-      console.log("Firebase initialized successfully for BRAIN AI CLUB");
+      if (typeof firebase.auth === 'function') {
+        auth = firebase.auth();
+      }
+      if (typeof firebase.firestore === 'function') {
+        db = firebase.firestore();
+      }
+      if (typeof firebase.storage === 'function') {
+        storage = firebase.storage();
+      }
+      console.log("Firebase initialized successfully for BRAIN AI CLUB (db ready:", !!db, ")");
     } else {
       console.warn("Firebase config has placeholders. Please add your credentials in firebase-config.js.");
     }
