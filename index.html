@@ -9,6 +9,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase Compat CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+
 <style>
   :root {
     /* FRESH LIGHT THEME (Default) */
@@ -1332,7 +1339,7 @@
       </div>
       <div>
         <h4>Explore</h4>
-        <ul><li><a href="#club">About Us</a></li><li><a href="#committee">Committee</a></li><li><a href="#active-members">Members</a></li><li><a href="#events">Events</a></li></ul>
+        <ul><li><a href="#club">About Us</a></li><li><a href="#committee">Committee</a></li><li><a href="#active-members">Members</a></li><li><a href="#events">Events</a></li><li><a href="admin.html" style="color:var(--primary); font-weight:700;">Admin Panel 🔒</a></li></ul>
       </div>
       <div>
         <h4>Connect</h4>
@@ -1353,6 +1360,35 @@
     </div>
   </div>
 </footer>
+
+<!-- DYNAMIC EVENT DETAILS MODAL (FOR CMS EVENTS) -->
+<div id="dynamicEventModal" class="modal-overlay">
+  <div class="modal-content event-modal-content" style="max-width: 950px; max-height: 90vh; overflow-y: auto; padding: 40px;">
+    <button class="modal-close" onclick="closeDynamicEventModal()">×</button>
+    <div class="event-details-body" style="color: var(--text-main); font-size: 16px; line-height: 1.7;">
+      <div class="event-tabs">
+        <button class="event-tab-btn active-tab" onclick="switchDynamicTab(this, 'dyn-details')">Event Details</button>
+        <button class="event-tab-btn" onclick="switchDynamicTab(this, 'dyn-photos')">Gallery Photos</button>
+      </div>
+
+      <!-- DETAILS TAB -->
+      <div id="dyn-details" class="event-tab-content active-content">
+        <div style="text-align:center; margin-bottom: 24px;">
+          <span id="dynEventCategory" style="font-size: 12px; font-weight: 700; background: var(--primary-glow); color: var(--primary); padding: 4px 14px; border-radius: 20px; border: 1px solid var(--primary); display: inline-block; margin-bottom: 10px;"></span>
+          <h3 id="dynEventTitle" style="color:var(--text-main); font-size: 26px; margin-bottom: 8px;"></h3>
+          <p id="dynEventDate" style="font-weight:600; color:var(--text-muted);"></p>
+        </div>
+        <div id="dynEventDescription" style="white-space: pre-line; line-height: 1.8;"></div>
+        <div id="dynEventTags" style="font-size:13px; color:var(--accent); line-height:1.8; word-wrap:break-word; margin-top: 32px;"></div>
+      </div>
+
+      <!-- PHOTOS TAB -->
+      <div id="dyn-photos" class="event-tab-content">
+        <div id="dynEventGallery" class="event-gallery"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- EVENT DETAILS MODAL -->
 <div id="eventModal" class="modal-overlay">
@@ -1946,6 +1982,218 @@
     if (successCard) {
       successCard.style.display = 'none';
     }
+  }
+
+  // ==========================================
+  // DYNAMIC CMS HYDRATION & EVENT MODAL
+  // ==========================================
+  window.cmsEvents = [];
+
+  async function hydrateSiteFromCMS() {
+    if (typeof isFirebaseConfigured === 'function' && isFirebaseConfigured() && typeof db !== 'undefined' && db) {
+      try {
+        const siteData = await getAllSiteContent();
+
+        // 1. Hero Section
+        if (siteData.hero) {
+          if (siteData.hero.kicker) {
+            const el = document.querySelector('#home .kicker');
+            if (el) el.textContent = siteData.hero.kicker;
+          }
+          if (siteData.hero.title) {
+            const el = document.querySelector('#home h1');
+            if (el) el.innerHTML = siteData.hero.title;
+          }
+          if (siteData.hero.subtitle) {
+            const el = document.querySelector('#home .hero-content p');
+            if (el) el.textContent = siteData.hero.subtitle;
+          }
+          if (siteData.hero.sliderImages && siteData.hero.sliderImages.length > 0) {
+            const track = document.getElementById('heroSlider');
+            if (track) {
+              track.innerHTML = siteData.hero.sliderImages.map((url, i) =>
+                `<img src="${url}" alt="Slider Photo ${i+1}" class="slide-img ${i === 0 ? 'active-slide' : ''}">`
+              ).join('');
+            }
+          }
+        }
+
+        // 2. College Section
+        if (siteData.college) {
+          if (siteData.college.title) {
+            const el = document.querySelector('#college h2');
+            if (el) el.textContent = siteData.college.title;
+          }
+          if (siteData.college.description) {
+            const el = document.querySelector('#college p');
+            if (el) el.textContent = siteData.college.description;
+          }
+          if (siteData.college.imageUrl) {
+            const el = document.querySelector('#college img');
+            if (el) el.src = siteData.college.imageUrl;
+          }
+        }
+
+        // 3. About Club Section
+        if (siteData.about) {
+          if (siteData.about.about) {
+            const el = document.querySelector('#club p');
+            if (el) el.textContent = siteData.about.about;
+          }
+        }
+
+        // 4. Inspiration Section
+        if (siteData.inspiration && siteData.inspiration.leaders && siteData.inspiration.leaders.length > 0) {
+          const grid = document.querySelector('#inspiration .inspiration-grid');
+          if (grid) {
+            grid.innerHTML = siteData.inspiration.leaders.map(ldr => `
+              <div class="leader-card">
+                <div class="leader-img">
+                  <img src="${ldr.image || 'logo.png.png'}" alt="${ldr.name}">
+                </div>
+                <div class="leader-info">
+                  <h3>${ldr.name}</h3>
+                  <div class="leader-role">${ldr.role || ''}</div>
+                  <p class="leader-quote">"${ldr.quote || ''}"</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+        // 5. Committee Section
+        if (siteData.committee && siteData.committee.members && siteData.committee.members.length > 0) {
+          const grid = document.querySelector('#committee .committee-grid');
+          if (grid) {
+            grid.innerHTML = siteData.committee.members.map(m => `
+              <div class="comm-card">
+                <div class="comm-img">
+                  <img src="${m.image || 'logo.png.png'}" alt="${m.name}">
+                </div>
+                <div class="comm-info">
+                  <div class="comm-badge">${m.category || 'Core'}</div>
+                  <h3>${m.name}</h3>
+                  <p>${m.role || ''}</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+        // 6. Active Members Section
+        if (siteData.active_members && siteData.active_members.members && siteData.active_members.members.length > 0) {
+          const grid = document.querySelector('#active-members .members-list-grid');
+          if (grid) {
+            grid.innerHTML = siteData.active_members.members.map(m => `
+              <div class="member-list-item">
+                <div class="member-name">${m.name}</div>
+                <div class="member-branch">${m.branch || 'AI&DS'} • ${m.year || 'Student'}</div>
+              </div>
+            `).join('');
+          }
+        }
+
+        // 7. Events Section (Dynamic Events)
+        const events = await getEvents();
+        if (events && events.length > 0) {
+          window.cmsEvents = events;
+          const grid = document.querySelector('.events-grid');
+          if (grid) {
+            grid.innerHTML = events.map(evt => `
+              <div class="event-card" onclick="openDynamicEventModal('${evt.id}')">
+                <div class="event-img">
+                  <img src="${evt.coverUrl || 'logo.png.png'}" alt="${evt.title}">
+                </div>
+                <div class="event-body">
+                  <div class="event-date">${evt.date || ''} • <span style="color:var(--primary); font-weight:600;">${evt.category || 'Event'}</span></div>
+                  <h4>${evt.title}</h4>
+                  <p>${evt.summary || ''}</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+        // 8. Site Settings & Socials
+        if (siteData.settings) {
+          if (siteData.settings.whatsapp) {
+            const wa = document.querySelector('.whatsapp-float');
+            if (wa) wa.href = siteData.settings.whatsapp;
+          }
+          if (siteData.settings.email) {
+            const mailLink = document.querySelector('footer a[href^="mailto:"]');
+            if (mailLink) {
+              mailLink.href = `mailto:${siteData.settings.email}`;
+              mailLink.textContent = siteData.settings.email;
+            }
+          }
+        }
+
+      } catch (err) {
+        console.warn("CMS Hydration Notice:", err);
+      }
+    }
+  }
+
+  // Dynamic Event Modal Functions
+  function openDynamicEventModal(eventId) {
+    if (!window.cmsEvents) return;
+    const evt = window.cmsEvents.find(e => e.id === eventId);
+    if (!evt) return;
+
+    document.getElementById('dynEventTitle').textContent = evt.title || '';
+    document.getElementById('dynEventCategory').textContent = evt.category || 'Event';
+    document.getElementById('dynEventDate').textContent = evt.date || '';
+    document.getElementById('dynEventDescription').textContent = evt.description || '';
+    document.getElementById('dynEventTags').textContent = evt.tags || '';
+
+    const gallery = document.getElementById('dynEventGallery');
+    gallery.innerHTML = '';
+    if (evt.galleryUrls && evt.galleryUrls.length > 0) {
+      evt.galleryUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = evt.title;
+        img.onclick = function() { openLightbox(url); };
+        gallery.appendChild(img);
+      });
+    } else {
+      gallery.innerHTML = '<p style="color:var(--text-muted); padding:20px; text-align:center;">No gallery photos uploaded for this event.</p>';
+    }
+
+    document.getElementById('dynamicEventModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDynamicEventModal() {
+    const modal = document.getElementById('dynamicEventModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  function switchDynamicTab(btn, targetId) {
+    const modal = document.getElementById('dynamicEventModal');
+    modal.querySelectorAll('.event-tab-btn').forEach(b => b.classList.remove('active-tab'));
+    modal.querySelectorAll('.event-tab-content').forEach(c => c.classList.remove('active-content'));
+    btn.classList.add('active-tab');
+    const target = document.getElementById(targetId);
+    if (target) target.classList.add('active-content');
+  }
+
+  const dynModal = document.getElementById('dynamicEventModal');
+  if (dynModal) {
+    dynModal.addEventListener('click', function(e) {
+      if (e.target === this) closeDynamicEventModal();
+    });
+  }
+
+  // Hydrate site on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrateSiteFromCMS);
+  } else {
+    hydrateSiteFromCMS();
   }
 
   // Event Modal Logic
