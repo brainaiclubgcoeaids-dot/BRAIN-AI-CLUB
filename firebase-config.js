@@ -14,12 +14,13 @@
  */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDkzf5HhMQ0CSirL2wDNmhZpyEaKjPANco",
+  authDomain: "brain-ai-club.firebaseapp.com",
+  projectId: "brain-ai-club",
+  storageBucket: "brain-ai-club.firebasestorage.app",
+  messagingSenderId: "176705378379",
+  appId: "1:176705378379:web:d8667eb270a17686e4d5ce",
+  measurementId: "G-33SFVYH1KT"
 };
 
 // Check if user has pasted real config
