@@ -660,19 +660,142 @@
   .modal-close:hover { background: var(--border); transform: rotate(90deg); color: var(--primary); }
   
   .modal-body { padding: 40px; }
-  .form-section-title { font-family: 'Outfit'; font-size: 14px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; font-weight: 800; }
-  .form-group { margin-bottom: 24px; }
-  .form-group label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--text-main); }
+  .form-section-title { font-family: 'Outfit'; font-size: 13px; color: var(--primary); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .form-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--text-main); }
   
-  .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"],
+  .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="url"],
   .form-group select, .form-group textarea {
-    width: 100%; padding: 16px; background: var(--bg); border: 1px solid var(--border);
-    border-radius: 14px; color: var(--text-main); font-family: 'Plus Jakarta Sans'; font-size: 15px;
+    width: 100%; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 14px; color: var(--text-main); font-family: 'Plus Jakarta Sans'; font-size: 14.5px;
     transition: all 0.3s;
+    box-sizing: border-box;
   }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     outline: none; border-color: var(--primary); background: var(--surface);
     box-shadow: 0 0 0 4px var(--primary-glow);
+  }
+  
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .form-grid-2 {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  .form-helper {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    display: block;
+  }
+
+  .required-star {
+    color: #ef4444;
+    font-weight: bold;
+    margin-left: 2px;
+  }
+
+  .interest-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .chip-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border-radius: 30px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+  .chip-label:hover {
+    border-color: var(--primary);
+    color: var(--text-main);
+    background: var(--surface-hover);
+  }
+  .chip-label input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .btn-submit-form {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px var(--primary-glow);
+  }
+  .btn-submit-form:hover {
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px var(--primary-glow);
+  }
+  .btn-submit-form:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .form-spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spinLoader 0.7s linear infinite;
+  }
+  @keyframes spinLoader {
+    to { transform: rotate(360deg); }
+  }
+
+  .form-alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    display: none;
+  }
+  .form-alert.alert-error {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+  .form-alert.alert-info {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--primary);
   }
   
   .checkbox-item, .radio-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -1404,12 +1527,148 @@
   </div>
 </div>
 
-<!-- MODAL FORM -->
+<!-- JOIN CLUB MODAL FORM -->
 <div id="joinModal" class="modal-overlay">
-  <div class="modal-content">
-    <button class="modal-close" onclick="closeJoinForm()">×</button>
-    <div class="modal-body" style="padding: 0; overflow: hidden; border-radius: 30px; height: 80vh; max-height: 800px;">
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf-Cio_RhwOqIjoQg52638Xr9mOnyNFKPRtK2sZZhpfjRXfiw/viewform?usp=header&embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  <div class="modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto; border-radius: 28px;">
+    <button class="modal-close" onclick="closeJoinForm()" aria-label="Close modal">×</button>
+    
+    <div class="modal-header" style="border-bottom: 1px solid var(--border); padding: 32px 36px 20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom: 8px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: var(--primary-glow); color: var(--primary); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--primary);">
+          Membership Application
+        </span>
+        <span style="font-size: 12px; color: var(--text-muted);">GF's GCOE Jalgaon</span>
+      </div>
+      <h2 style="font-size: 28px; font-weight: 800; margin: 0 0 6px; color: var(--text-main);">Join BRAIN AI CLUB</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+        Become a member of the Artificial Intelligence & Data Science student community. Fill in your details below to register.
+      </p>
+    </div>
+
+    <div class="modal-body" style="padding: 30px 36px 36px;">
+      <!-- Alert Message Box -->
+      <div id="formAlertBox" class="form-alert"></div>
+
+      <!-- Success Screen (Hidden by default) -->
+      <div id="joinSuccessState" style="display: none; text-align: center; padding: 30px 10px;">
+        <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 style="font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">Welcome to BRAIN AI CLUB! 🎉</h3>
+        <p style="font-size: 15px; color: var(--text-muted); max-width: 480px; margin: 0 auto 24px; line-height: 1.6;">
+          Aapka registration form successfully Google Sheet me submit ho gaya hai! Hamari team aapse jald hi WhatsApp aur Email ke through contact karegi.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button type="button" onclick="resetJoinForm()" class="btn ghost">Submit Another Response</button>
+          <button type="button" onclick="closeJoinForm()" class="btn">Close</button>
+        </div>
+      </div>
+
+      <!-- Main Registration Form -->
+      <form id="brainAiJoinForm" onsubmit="handleJoinFormSubmit(event)">
+        <!-- Section: Personal Details -->
+        <div class="form-section-title">1. Personal Information</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="fullName">Full Name <span class="required-star">*</span></label>
+            <input type="text" id="fullName" name="fullName" placeholder="e.g. Rahul Sharma" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address <span class="required-star">*</span></label>
+            <input type="email" id="email" name="email" placeholder="e.g. rahul@example.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="phone">WhatsApp / Mobile No. <span class="required-star">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number" required autocomplete="tel">
+            <span class="form-helper">For club WhatsApp group updates</span>
+          </div>
+          <div class="form-group">
+            <label for="rollNo">Roll Number / PRN <span class="required-star">*</span></label>
+            <input type="text" id="rollNo" name="rollNo" placeholder="e.g. 21BTECH042" required>
+          </div>
+        </div>
+
+        <!-- Section: Academic Details -->
+        <div class="form-section-title" style="margin-top: 10px;">2. Academic Details</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="department">Department / Branch <span class="required-star">*</span></label>
+            <select id="department" name="department" required>
+              <option value="" disabled selected>Select your branch</option>
+              <option value="Artificial Intelligence & Data Science (AI&DS)">Artificial Intelligence & Data Science (AI & DS)</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology (IT)</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Other">Other Branch</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="year">Current Academic Year <span class="required-star">*</span></label>
+            <select id="year" name="year" required>
+              <option value="" disabled selected>Select current year</option>
+              <option value="First Year (FE)">First Year (FE)</option>
+              <option value="Second Year (SE)">Second Year (SE)</option>
+              <option value="Third Year (TE)">Third Year (TE)</option>
+              <option value="Final Year (BE)">Final Year (BE)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section: Technical Interests -->
+        <div class="form-section-title" style="margin-top: 10px;">3. Areas of Interest (Select All That Apply)</div>
+        <div class="form-group">
+          <div class="interest-chips">
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Machine Learning & AI"> 🤖 Machine Learning & AI
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Web & App Development"> 💻 Web & App Development
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Data Science & Analytics"> 📊 Data Science & Analytics
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Prompt Engineering & GenAI"> ✨ Prompt Engineering & GenAI
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Robotics & IoT"> ⚡ Robotics & IoT
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="UI/UX & Graphic Design"> 🎨 UI/UX & Graphic Design
+            </label>
+            <label class="chip-label">
+              <input type="checkbox" name="interest" value="Event Management & PR"> 📢 Event Management & PR
+            </label>
+          </div>
+          <span class="form-helper">Choose the domains you're interested in working or learning about</span>
+        </div>
+
+        <!-- Section: Motivation & Links -->
+        <div class="form-section-title" style="margin-top: 10px;">4. Statement & Profiles</div>
+        <div class="form-group">
+          <label for="whyJoin">Why do you want to join BRAIN AI CLUB?</label>
+          <textarea id="whyJoin" name="whyJoin" rows="3" placeholder="Tell us about your interest in AI/DS, what you hope to learn or contribute to the club..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="portfolio">LinkedIn / GitHub / Portfolio Link (Optional)</label>
+          <input type="url" id="portfolio" name="portfolio" placeholder="https://linkedin.com/in/username or https://github.com/username">
+        </div>
+
+        <div style="margin-top: 28px;">
+          <button type="submit" id="submitJoinBtn" class="btn-submit-form">
+            <span id="submitBtnText">Submit Membership Application</span>
+            <span id="submitBtnSpinner" class="form-spinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -1543,6 +1802,151 @@
   document.getElementById('joinModal').addEventListener('click', function(e){
     if (e.target === this) closeJoinForm();
   });
+
+  // ==========================================
+  // GOOGLE SHEET & JOIN FORM SUBMISSION LOGIC
+  // ==========================================
+  // NOTE: Paste your deployed Google Apps Script Web App URL below
+  // Instructions are in the `google_apps_script.js` file.
+  let GOOGLE_SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-zdLPJ5MZTbqysGuq5k06AX7-c-Lj5C0x6HGmbt1b6c8EFVFefnAkc4Hb81KWKu9Y/exec';
+
+  function handleJoinFormSubmit(e) {
+    e.preventDefault();
+
+    const form = document.getElementById('brainAiJoinForm');
+    const submitBtn = document.getElementById('submitJoinBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const submitBtnSpinner = document.getElementById('submitBtnSpinner');
+    const alertBox = document.getElementById('formAlertBox');
+    const successCard = document.getElementById('joinSuccessState');
+
+    // Reset alert box
+    alertBox.style.display = 'none';
+    alertBox.className = 'form-alert';
+
+    const fullName = form.fullName.value.trim();
+    const email = form.email.value.trim();
+    const phone = form.phone.value.trim();
+    const rollNo = form.rollNo.value.trim();
+    const department = form.department.value;
+    const year = form.year.value;
+    const whyJoin = form.whyJoin.value.trim();
+    const portfolio = form.portfolio.value.trim();
+
+    // Collect checked interests
+    const checkedInterests = [];
+    form.querySelectorAll('input[name="interest"]:checked').forEach(function(cb) {
+      checkedInterests.push(cb.value);
+    });
+
+    // Validations
+    if (!fullName || !email || !phone || !rollNo || !department || !year) {
+      showFormAlert('Kripya sabhi zaroori fields (*) bharein.', 'alert-error');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      showFormAlert('Kripya 10-digit ka valid mobile / WhatsApp number enter karein.', 'alert-error');
+      return;
+    }
+
+    // Prepare URL-encoded parameters for Google Apps Script
+    const params = new URLSearchParams();
+    params.append('fullName', fullName);
+    params.append('email', email);
+    params.append('phone', phone);
+    params.append('rollNo', rollNo);
+    params.append('department', department);
+    params.append('year', year);
+    params.append('interests', checkedInterests.join(', '));
+    params.append('whyJoin', whyJoin);
+    params.append('portfolio', portfolio);
+
+    // Update UI to loading state
+    submitBtn.disabled = true;
+    submitBtnText.textContent = 'Submitting Application...';
+    submitBtnSpinner.style.display = 'inline-block';
+
+    const activeScriptUrl = localStorage.getItem('brain_ai_script_url') || GOOGLE_SHEET_SCRIPT_URL;
+
+    // Check if script URL has been configured
+    if (!activeScriptUrl || activeScriptUrl.includes('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL')) {
+      setTimeout(function() {
+        submitBtn.disabled = false;
+        submitBtnText.textContent = 'Submit Membership Application';
+        submitBtnSpinner.style.display = 'none';
+
+        const promptUrl = prompt(
+          'Google Apps Script Web App URL set nahi hai!\n\n' +
+          'Aapne Google Sheet me jo Apps Script deploy kiya hai, uska Web App URL yahan paste karein:\n(e.g. https://script.google.com/macros/s/.../exec)'
+        );
+
+        if (promptUrl && promptUrl.startsWith('http')) {
+          localStorage.setItem('brain_ai_script_url', promptUrl.trim());
+          showFormAlert('Web App URL save ho gaya! Kripya dobara Submit button par click karein.', 'alert-info');
+        } else {
+          showFormAlert(
+            'Google Apps Script URL set nahi hai. Kripya `google_apps_script.js` file ke instructions dekh kar apna Web App URL add karein.',
+            'alert-error'
+          );
+        }
+      }, 400);
+      return;
+    }
+
+    // Submit to Google Apps Script Web App
+    fetch(activeScriptUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    })
+    .then(function() {
+      // In no-cors mode, completion indicates the data reached Google
+      submitBtn.disabled = false;
+      submitBtnText.textContent = 'Submit Membership Application';
+      submitBtnSpinner.style.display = 'none';
+
+      // Hide form & show success screen
+      form.style.display = 'none';
+      successCard.style.display = 'block';
+    })
+    .catch(function(err) {
+      console.error('Error submitting form:', err);
+      submitBtn.disabled = false;
+      submitBtnText.textContent = 'Submit Membership Application';
+      submitBtnSpinner.style.display = 'none';
+      showFormAlert('Form submit karne me samasya aayi. Kripya apna internet connection check karein ya thodi der baad prayas karein.', 'alert-error');
+    });
+  }
+
+  function showFormAlert(msg, typeClass) {
+    const alertBox = document.getElementById('formAlertBox');
+    if (!alertBox) return;
+    alertBox.textContent = msg;
+    alertBox.className = 'form-alert ' + typeClass;
+    alertBox.style.display = 'block';
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function resetJoinForm() {
+    const form = document.getElementById('brainAiJoinForm');
+    const successCard = document.getElementById('joinSuccessState');
+    const alertBox = document.getElementById('formAlertBox');
+
+    if (form) {
+      form.reset();
+      form.style.display = 'block';
+    }
+    if (alertBox) {
+      alertBox.style.display = 'none';
+    }
+    if (successCard) {
+      successCard.style.display = 'none';
+    }
+  }
 
   // Event Modal Logic
   function openEventModal() {
