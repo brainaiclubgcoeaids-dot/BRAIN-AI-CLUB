@@ -2084,14 +2084,12 @@
         }
 
         // 6. Active Members Section
-        if (siteData.active_members && siteData.active_members.members && siteData.active_members.members.length > 0) {
+        // Only override static HTML if Firestore has 5+ members (prevents wiping static fallback)
+        if (siteData.active_members && siteData.active_members.members && siteData.active_members.members.length >= 5) {
           const grid = document.querySelector('#active-members .members-list-grid');
           if (grid) {
             grid.innerHTML = siteData.active_members.members.map(m => `
-              <div class="member-list-item">
-                <div class="member-name">${m.name}</div>
-                <div class="member-branch">${m.branch || 'AI&DS'} • ${m.year || 'Student'}</div>
-              </div>
+              <div class="member-list-item">${m.name || m}</div>
             `).join('');
           }
         }
